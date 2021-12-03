@@ -79,7 +79,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'instagram',
         'USER':'moringa',
-        'PASSWORD':'Access'    }
+        'PASSWORD':'Access'    
+    }
 }
 
 
