@@ -192,3 +192,45 @@ class ProfileDetailView(DetailView):
 
 
 
+def follow_unfollow(request):
+
+    if request.method=='POST':
+        my_profile=Profile.objects.get(user=request.user)
+        pk= request.POST.get('follow')
+        obj=Profile.objects.get(id=pk)
+
+        if obj.user in my_profile.following.all():
+            my_profile.following.remove(obj.user)
+        else:
+            my_profile.following.add(obj.user)
+        return redirect(request.META.get('HTTP_REFERER'))
+    return HttpResponseRedirect(request.path_info)
+        # return redirect('profile-list-view ')
+def folo(request,id):
+    current_user = request.user
+    usertoFollow = User.objects.get(id = id)
+    follow = Followwww(user,usetoFollow)
+    follow.save()
+    return HttpResponseRedirect(request.path_info)
+
+def register(request):
+    if request.method=="POST":
+        form=RegistrationForm(request.POST)
+        procForm=profileForm(request.POST, request.FILES)
+        if form.is_valid() and procForm.is_valid():
+            username=form.cleaned_data.get('username')
+            user=form.save()
+            profile=procForm.save(commit=False)
+            profile.user=user
+            profile.save()
+
+            # messages.success(request, f'Successfully created Account!.You can now login as {username}!')
+        return redirect('login')
+    else:
+        form= RegistrationForm()
+        prof=profileForm()
+    params={
+        'form':form,
+        'profForm': prof
+    }
+    return render(request, 'users/register.html', params)    
