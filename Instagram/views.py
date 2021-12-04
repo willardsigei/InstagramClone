@@ -152,3 +152,43 @@ class PostDetailView(DetailView):
         total_likes=stuff.total_likes()
         context["total_likes"]=total_likes
         return context    
+
+def likePost(request,id):
+    post= get_object_or_404(Image, id=request.POST.get('post_id'))
+    post.likes.add(request.user)
+    # return HttpResponseRedirect(reverse('home', args=[str(id)]))
+    return HttpResponseRedirect(request.path_info)
+
+class UserListView(ListView):
+    model=Profile
+    template_name='posts/view.html'
+    context_object_name='posts'
+
+    def get_queryset(self):
+        return Profile.objects.all().exclude(user=self.request.user)
+            # user = get_object_or_404(User, username=self.kwargs.get('username'))
+            # return Image.objects.filter(author=user.profile).order_by('-date_posted')
+
+class ProfileDetailView(DetailView):
+    model=Profile
+    template_name='posts/detail.html'
+    context_object_name='posts'
+
+    def get_object(self, **kwargs):
+        id=self.kwargs.get('pk')
+        prof=Profile.objects.get(pk=id)
+        return prof
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        avi=self.get_object()
+        myProf=Profile.objects.get(user=self.request.user)
+        if avi.user in myProf.following.all():
+            follow=True
+        else:
+            follow=False
+        context["follow"]=follow
+        return context
+
+
+
